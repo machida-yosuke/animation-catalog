@@ -1,7 +1,14 @@
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
+import { Suspense, lazy, useState } from "react"
+const DynamicImportComponent = lazy(() => import("./dynamic-import"));
+
+const FallbackComponent = ()=>{
+  return <p>fallback</p>
+}
 
 export function Welcome() {
+  const [isShow, setIsShow] = useState<boolean>(false);
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
@@ -19,6 +26,14 @@ export function Welcome() {
             />
           </div>
         </header>
+        
+        {isShow &&
+          <Suspense fallback={FallbackComponent()}>
+            <DynamicImportComponent />
+          </Suspense>
+        }
+        <button onClick={()=>setIsShow(true)}>show</button>
+
         <div className="max-w-[300px] w-full space-y-6 px-4">
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
             <p className="leading-6 text-gray-700 dark:text-gray-200 text-center">
