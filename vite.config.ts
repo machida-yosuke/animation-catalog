@@ -3,6 +3,8 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { getLoadContext } from './load-context'
+import { cloudflareDevProxy } from '@react-router/dev/vite/cloudflare'
 
 export default defineConfig({
   css: {
@@ -10,5 +12,20 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [
+    cloudflareDevProxy({ getLoadContext }),
+    reactRouter(),
+    tsconfigPaths(),
+  ],
+  ssr: {
+    resolve: {
+      conditions: ['workerd', 'worker', 'browser'],
+    },
+  },
+  resolve: {
+    mainFields: ['browser', 'module', 'main'],
+  },
+  build: {
+    minify: true,
+  },
 });
